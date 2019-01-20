@@ -119,7 +119,7 @@ Get Historical Price
 
 The resultant DataFrame, df, should be as follows (how columns are nicely sorted in an alphabetical order!):
 ```julia
-    julia> df2
+    julia> df
     5000×11 DataFrame
     │ Row  │ closeAsk │ closeBid │ complete │ highAsk │ highBid │ lowAsk  │ lowBid  │ openAsk │ openBid │ time                        │ volume │
     │      │ Float64  │ Float64  │ Bool     │ Float64 │ Float64 │ Float64 │ Float64 │ Float64 │ Float64 │ String                      │ Int64  │
