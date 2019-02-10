@@ -22,6 +22,7 @@ Load the packages next:
 2. [Get Streaming Price](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#get-streaming-pricestill-in-dev)
 3. [Get Historical Price](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#get-historical-price)
 4. [Plot OHLC chart](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#plot-ohlc-chart)
+
                         
 Get Current Price
 -----------------
@@ -151,5 +152,18 @@ Plot OHLC chart
     gui(graph)
     show = true
 ```
+
+Any relationsihp between Open and Close Bids???
+---------------
+Interesting observation from the 5000 sample data? Let's find out.
+
+```julia
+    #closeBid in X-Axis and openBid in Y-Axis
+    histogram2d(df[:, :closeBid], df[:, :openBid], nbins=25)
+    
+    xaxis!("CloseBid")
+    yaxis!("OpenBid")    
+```
+
 
 
