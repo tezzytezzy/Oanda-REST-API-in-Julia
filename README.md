@@ -9,6 +9,7 @@ First of all, make sure to add the following packages:
       [cd3eb016] HTTP v0.7.1
       [682c06a0] JSON v0.20.0
       [91a5bcdd] Plots v0.22.0
+      [f3b207a7] StatsPlots v0.10.1
 ```
 Load the packages next:
 ```julia
@@ -157,6 +158,8 @@ Plot OHLC chart
 Interesting observation between Open and Close Bids from the 5000 sample data? Let's find out.
 
 ```julia
+    using StatsPlots
+    
     #closeBid in X-Axis and openBid in Y-Axis
     histogram2d(df[:, :closeBid], df[:, :openBid], nbins=25)
     
