@@ -22,8 +22,9 @@ Load the packages next:
 1. [Get Current Price](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#get-current-price)
 2. [Get Streaming Price](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#get-streaming-pricestill-in-dev)
 3. [Get Historical Price](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#get-historical-price)
-4. [Plot OHLC chart](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#plot-ohlc-chart)
+4. [Plot OHLC Chart](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#plot-ohlc-chart)
 5. [2D Histogram](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#2d-histogram)
+6. [Seasonality Chart](https://github.com/tezzytezzy/Oanda-REST-API-in-Julia#seasonality-chart)
                         
 Get Current Price
 -----------------
@@ -96,26 +97,28 @@ Get Historical Price
 --------------------
 ```julia
     #The following code utilises Oanda V1 API, which will be officially deprecated soon
-
+    #You don't need account_id and api_key
+    
     instrument = "EUR_USD"
-    account_id = "123-456-7890123-456"
-    api_key = "9r32rjijfiewjfoihfoi3u9439243294329432-094328hhrfiehfiheip81724jhfd"
     
     #With count paramter of 5000 and daily ("D") data  (NO start or end date to be included!) 
     url = string("https://api-fxpractice.oanda.com/v1/candles?instrument=", instrument, "&granularity=D&count=5000"
+
+    #Or, pass start and end dates
+    #"%3A" means ":" in accordance with the ISO 8601 (UTC) format
+    url = "https://api-fxpractice.oanda.com/v1/candles?instrument=EUR_USD&start=2011-01-02T15%3A47%3A40Z&end=2019-02-14T15%3A47%3A50Z&granularity=D"
 
     r = HTTP.request(
       "GET",
       url,
       ["Accept" => "application/json",
-       "Content-Type" => "application/json",
-       "Authorization" => string("Bearer ", api_key) ]
-       )
+       "Content-Type" => "application/json"]
+      )
+      
     response = r.body
     data = JSON.parse(String(response))
     
     #Convert every single array into an instance of Dataframe and then concatenate each one of them with "vcat"
-    #Without the splat (...), a warning gets generated, but it executes without a failure
     df = vcat(DataFrame.(data["candles"])...)
 ```
 
@@ -134,7 +137,7 @@ The resultant DataFrame, df, should be as follows (how columns are nicely sorted
     │ 5000 │ 1.1467   │ 1.14657  │ false    │ 1.14827 │ 1.14814 │ 1.14514 │ 1.14501 │ 1.14659 │ 1.14559 │ 2019-01-13T22:00:00.000000Z │ 11729  │
 ```
 
-Plot OHLC chart
+Plot OHLC Chart
 ---------------
 ```julia
     #Load GR backend of Plots (GR is its default)
@@ -168,4 +171,28 @@ Interesting observation between Open and Close Bids from the 5000 sample data? L
 ```
 ![](test.png)
 
+Seasonality Chart
+------------
+My favourite visual to see any yearly seasonal patterns over the years
+
+```julia
+    using StatsPlots, Dates
+    
+    #Extract "YYYY-MM-DD" in date format, using broadcasting
+    d = Date.(first.(df.time, 10))
+
+    #Dynamically add a new column, named "day", to the df DataFrame with day count nubmer in the column
+    #@. denotes every single operation involves broadcasting
+    #Align day of the year by adding 1 (true) to days in February onwards for a non-leap year  
+    df.day = @. dayofyear(d) + ((!isleapyear(d)) & (month(d) > 2))
+
+    #Add year column for grouping later on
+    df.year = year.(d)
+    
+    #@df df plot(:day, :closeBid, group=:year)
+    
+    xaxis!("N-th day of the year")
+    title!("EURUSD")
+```
+![](seasonality.png)
 
