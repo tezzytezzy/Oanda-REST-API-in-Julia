@@ -102,11 +102,13 @@ Get Historical Price
     instrument = "EUR_USD"
     
     #With count paramter of 5000 and daily ("D") data  (NO start or end date to be included!) 
-    url = string("https://api-fxpractice.oanda.com/v1/candles?instrument=", instrument, "&granularity=D&count=5000"
+    url = string("https://api-fxpractice.oanda.com/v1/candles?granularity=D&count=5000&instrument=", instrument)
 
     #Or, pass start and end dates
     #"%3A" means ":" in accordance with the ISO 8601 (UTC) format
-    url = "https://api-fxpractice.oanda.com/v1/candles?instrument=EUR_USD&start=2011-01-02T15%3A47%3A40Z&end=2019-02-14T15%3A47%3A50Z&granularity=D"
+    startdate = "2011-01-02T15%3A47%3A40Z"
+    enddate = "2019-02-14T15%3A47%3A50Z"
+    url = string("https://api-fxpractice.oanda.com/v1/candles?granularity=D&instrument=", instrument, "&start=", startdate, "&end=", enddate)
 
     r = HTTP.request(
       "GET",
