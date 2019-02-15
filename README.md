@@ -189,10 +189,11 @@ My favourite visual to see any yearly seasonal patterns over the years
     #Add year column for grouping later on
     df.year = year.(d)
     
-    #@df df plot(:day, :closeBid, group=:year)
+    #Use @df macro to take in DataFrame (Plots cannot!) to multi-line chart, grouping by year
+    @df df plot(:day, :closeBid, group=:year)
     
     xaxis!("N-th day of the year")
     title!("EURUSD")
 ```
-![](seasonality.png)
+![](seasonality2.png)
 
